@@ -46,13 +46,23 @@ def generate_ai_report(tickers):
     market_context = f"【今日日期】：{current_date}\n\n"
     for t in tickers:
         stock = yf.Ticker(t)
-        news = stock.news[:2]
-        price = stock.history(period="1d")['Close'].iloc[-1] if not stock.history(period="1d").empty else 0
+        # 抓取新聞並加入保險機制
+        news = stock.news
+        price_data = stock.history(period="1d")
+        price = price_data['Close'].iloc[-1] if not price_data.empty else 0
+        
         market_context += f"--- {t} (現價: ${price:.2f}) ---\n"
-        for n in news:
-            market_context += f"- 新聞: {n['title']}\n"
+        
+        if news:
+            # 只取前 2 則，並確認有標題才加入
+            for n in news[:2]:
+                # 修正處：使用 get('title') 避免 KeyError，若無標題則顯示「無標題」
+                title = n.get('title') or n.get('summary') or "相關市場變動"
+                market_context += f"- 新聞: {title}\n"
+        else:
+            market_context += "- 目前無即時新聞\n"
     
-    # 動態 Prompt：AI 會根據當下的時間點進行解讀
+    # 動態 Prompt
     prompt = f"""
     你是一位資深全球投資策略師。今天是 {current_date}。
     
@@ -60,9 +70,9 @@ def generate_ai_report(tickers):
     {market_context}
     
     分析要求：
-    1. 必須考慮今日日期所屬的週期（如：年初佈局、季度末、或財報季）。
-    2. 指出目前的「市場熱度」是否過熱，並給出最具成長潛力的族群。
-    3. 給出具體的「操作建議」，特別是針對美股與台股記憶體族群。
+    1. 必須考慮今日日期所屬的週期。
+    2. 指出目前的「市場熱度」是否過熱。
+    3. 給出具體的「操作建議」。
     """
     return model.generate_content(prompt).text
 
