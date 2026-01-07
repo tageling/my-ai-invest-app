@@ -13,7 +13,7 @@ import plotly.graph_objects as go
 
 
 # 1. API 配置 (請在此填入你的 Gemini API Key)
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
+genai.configure(api_key="AIzaSyCSBRWUE8tpv3zcwzGT7yeIhAbE9Y1yLr8")
 
 # 2. 初始化持久化追蹤清單 (Session State)
 if 'my_watchlist' not in st.session_state:
