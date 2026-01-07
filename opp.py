@@ -11,8 +11,6 @@ import pandas as pd
 from datetime import datetime, timedelta
 import plotly.graph_objects as go
 
-import requests_cache
-session = requests_cache.CachedSession('yfinance.cache')
 
 # 1. API 配置 (請在此填入你的 Gemini API Key)
 genai.configure(api_key="YOUR_GEMINI_API_KEY")
@@ -23,19 +21,18 @@ if 'my_watchlist' not in st.session_state:
 
 # --- 核心數據與分析函數 ---
 def get_stock_data(ticker):
-    # 建立一個 session 並偽裝成瀏覽器
-    session.headers.update({
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
-    })
-    
-    stock = yf.Ticker(ticker, session=session) # 使用帶有 header 的 session
-    
     try:
-        # 抓取 1 個月數據，失敗時回傳空 dataframe
+        # 直接初始化 Ticker，不要傳入 session
+        stock = yf.Ticker(ticker)
+        # 抓取 1 個月數據
         hist = stock.history(period="1mo")
+        
+        if hist.empty:
+            st.warning(f"注意：{ticker} 目前沒有回傳數據。")
+            
         return hist
     except Exception as e:
-        st.error(f"無法抓取 {ticker} 的數據: {e}")
+        st.error(f"抓取 {ticker} 發生錯誤: {e}")
         return pd.DataFrame()
 
 def generate_ai_report(tickers):
