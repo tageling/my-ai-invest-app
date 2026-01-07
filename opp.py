@@ -13,7 +13,14 @@ import plotly.graph_objects as go
 
 
 # 1. API 配置 (請在此填入你的 Gemini API Key)
-genai.configure(api_key="AIzaSyCSBRWUE8tpv3zcwzGT7yeIhAbE9Y1yLr8")
+#genai.configure(api_key="AIzaSyCSBRWUE8tpv3zcwzGT7yeIhAbE9Y1yLr8")
+
+# 確保從 Streamlit 後台的 Secrets 讀取金鑰
+if "YOUR_GEMINI_API_KEY" in st.secrets:
+    genai.configure(api_key=st.secrets["YOUR_GEMINI_API_KEY"])
+else:
+    st.error("請在 Streamlit Cloud 的 Secrets 中設定 YOUR_GEMINI_API_KEY")
+    st.stop()
 
 # 2. 初始化持久化追蹤清單 (Session State)
 if 'my_watchlist' not in st.session_state:
