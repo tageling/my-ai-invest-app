@@ -66,10 +66,11 @@ def generate_ai_report(tickers):
     # 1. 先試 3.0 Flash (最新)
     # 2. 再試 2.0 Flash (最穩)
     # 3. 最後試 1.5 Flash (保底)
+# --- 關鍵修正：強制優先使用 Gemini 3.0 Flash ---
     models_to_try = [
-        "models/gemini-3-flash-preview", 
-        "models/gemini-2.0-flash", 
-        "models/gemini-1.5-flash"
+        "models/gemini-3-flash-preview",  # <--- 第一順位：最新 3.0 Flash
+        "models/gemini-2.0-flash",        # 第二順位：穩定的 2.0 Flash
+        "models/gemini-flash-latest"      # 保底選項
     ]
     
     last_error = ""
