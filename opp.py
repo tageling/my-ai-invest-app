@@ -22,7 +22,7 @@ if 'my_watchlist' not in st.session_state:
 def get_stock_data(ticker):
     try:
         stock = yf.Ticker(ticker)
-        # 抓取 6 個月數據以確保籌碼均線計算準確
+        # 抓取 6 個月數據以確保指標計算準確
         hist = stock.history(period="6mo")
         if hist.empty: return pd.DataFrame()
         
@@ -35,10 +35,10 @@ def get_stock_data(ticker):
         # --- 計算籌碼量價指標 ---
         hist['MA20'] = hist['Close'].rolling(window=20).mean()
         hist['Vol_MA20'] = hist['Volume'].rolling(window=20).mean()
-        # 量比：今日成交量 / 20日平均量 (判斷是否有大戶進場)
         hist['Vol_Ratio'] = hist['Volume'] / hist['Vol_MA20']
         
-        return hist.tail(30)
+        # 【關鍵修改】回傳最近 90 天的數據 (約 3 個月交易日)
+        return hist.tail(90)
     except:
         return pd.DataFrame()
 
