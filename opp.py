@@ -72,7 +72,12 @@ def generate_ai_report(tickers):
     2. 籌碼：近期有機構資金明顯流入（成交量異常爆發）。
     3. 技術：FKD 低位轉強。
     
-    要求：使用繁體中文，禁止使用程式碼區塊標記，直接輸出專業報告。
+    格式美化要求 (重要)：
+    1. 【標題美化】：請在所有大標題加上 :blue-background[文字內容]。
+    2. 【標的突出】：提及股票代號時，請使用 :orange[代號]。
+    3. 【建議標籤】：針對買賣建議，請務必使用徽章標籤，例如 :green-badge[強烈建議買入]、:red-badge[建議減碼]、:gray-badge[觀望]。
+    4. 【數據強調】：重要的數值（如量比、FKD）請用 :violet[數值] 標示。
+    5. 【禁止行為】：使用繁體中文，禁止使用任何程式碼區塊標記 (如 ```)，直接輸出專業格式文字。
     """
 
     models_to_try = ["models/gemini-3-flash-preview", "models/gemini-2.0-flash", "models/gemini-flash-latest"]
