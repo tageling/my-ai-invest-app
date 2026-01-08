@@ -34,7 +34,7 @@ def get_stock_data(ticker):
 # --- 核心 AI 分析函數 ---
 def generate_ai_report(tickers):
     # 【關鍵修正】根據你的 API 清單，使用 gemini-2.5-flash
-    target_model_name = ""models/gemini-3-pro-preview"
+    target_model_name = "models/gemini-3-pro-preview"
     
     # 備用方案：如果 2.5 失敗，嘗試 2.0
     fallback_model_name = "models/gemini-2.5-flash"
