@@ -31,16 +31,18 @@ def get_stock_data(ticker):
         st.error(f"無法抓取 {ticker}: {e}")
         return pd.DataFrame()
 
-# --- 核心 AI 分析函數 (含自動模型切換) ---
+# --- 核心 AI 分析函數 ---
 def generate_ai_report(tickers):
-    # 步驟 A: 嘗試建立模型 (自動切換機制)
-    target_model_name = "models/gemini-1.5-flash" # 首選
-    fallback_model_name = "models/gemini-pro"     # 備案
+    # 【關鍵修正】根據你的 API 清單，使用 gemini-2.5-flash
+    target_model_name = ""models/gemini-3-pro-preview"
+    
+    # 備用方案：如果 2.5 失敗，嘗試 2.0
+    fallback_model_name = "models/gemini-2.5-flash"
     
     try:
         model = genai.GenerativeModel(target_model_name)
     except:
-        st.warning(f"⚠️ 找不到 {target_model_name}，正在切換至舊版模型...")
+        st.warning(f"⚠️ 找不到 {target_model_name}，正在切換至 {fallback_model_name}...")
         model = genai.GenerativeModel(fallback_model_name)
 
     # 步驟 B: 準備數據
@@ -83,35 +85,21 @@ def generate_ai_report(tickers):
     3. 風險提示：是否有過熱跡象？
     """
 
-    # 步驟 D: 執行生成 (含詳細錯誤回報)
+    # 步驟 D: 執行生成
     try:
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        # 如果失敗，列出帳號能用的所有模型，方便除錯
-        available_models = []
-        try:
-            for m in genai.list_models():
-                if 'generateContent' in m.supported_generation_methods:
-                    available_models.append(m.name)
-        except:
-            available_models = ["無法取得模型清單"]
-            
         return f"""
         ❌ AI 分析生成失敗。
-        
         錯誤原因: {str(e)}
-        
-        您的 API Key 目前可用的模型有:
-        {available_models}
-        
-        建議：請將上述錯誤訊息截圖給開發者。
+        模型嘗試: {target_model_name}
         """
 
 # --- 網頁介面 ---
 st.set_page_config(page_title="2026 AI 戰情室", layout="wide")
 st.title("🛡️ 2026 全球 AI 投資戰情室")
-st.caption(f"系統連線正常 | 日期: {datetime.now().strftime('%Y-%m-%d')}")
+st.caption(f"系統連線正常 (模型: Gemini 2.5 Flash) | 日期: {datetime.now().strftime('%Y-%m-%d')}")
 
 # 側邊欄
 with st.sidebar:
@@ -152,12 +140,12 @@ if st.session_state.my_watchlist:
 st.divider()
 
 # 主畫面 - AI 分析
-st.subheader("🤖 AI 首席策略師分析")
+st.subheader("🤖 AI 首席策略師分析 (Powered by Gemini 2.5)")
 if st.button("🚀 啟動全市場掃描", type="primary"):
-    with st.spinner("AI 正在閱讀全球新聞與財報... (若第一次執行需等待約 10 秒)"):
+    with st.spinner("AI 正在閱讀全球新聞與財報... (使用 Gemini 2.5 模型)"):
         report = generate_ai_report(st.session_state.my_watchlist)
         if "❌" in report:
-            st.error(report) # 顯示紅色的詳細錯誤
+            st.error(report)
         else:
             st.success("分析完成！")
             st.markdown(report)
