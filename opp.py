@@ -14,7 +14,7 @@ else:
 
 # 2. 初始化持久化追蹤清單
 if 'my_watchlist' not in st.session_state:
-    st.session_state.my_watchlist = ["MU", "NVDA", "2408.TW", "SMR", "PLTR"]
+    st.session_state.my_watchlist = ["MU", "NVDA", "TSLA", "SMR", "PLTR"]
 
 # --- 核心數據函數 ---
 def get_stock_data(ticker):
