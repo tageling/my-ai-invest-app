@@ -16,7 +16,7 @@ else:
 
 # 2. 初始化清單
 if 'my_watchlist' not in st.session_state:
-    st.session_state.my_watchlist = ["MU", "NVDA", "TSLA", "SMR", "PLTR"]
+    st.session_state.my_watchlist = ["MU", "NVDA", "TSLA", "SMR", "PLTR","VST"]
 
 # --- 核心數據函數 (加入籌碼量價邏輯) ---
 def get_stock_data(ticker):
@@ -62,7 +62,7 @@ def generate_ai_report(tickers):
     你是一位擁有 20 年資歷的首席量化分析師。今天是 {current_date}。
     
     【任務一：清單診斷】
-    請針對以下追蹤清單，結合『籌碼量比 (Vol Ratio)』與『FKD 指標』給出具體的買賣建議：
+    請針對以下追蹤清單，結合基本面分析，主動檢索並說明該公司 2026 最新消息、獲利預期或產業地位，『籌碼量比 (Vol Ratio)』與『FKD 指標』給出具體的買賣建議：
     {market_context}
     
     【任務二：全球黑馬獵殺】
